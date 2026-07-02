@@ -374,7 +374,7 @@ jobs:
           RELEASES_BRANCH="${{ inputs.releases_branch }}"
           chmod +x ${IMAGEBUILDER_SH}
           # Injecting packages here via the PACKAGES variable
-          export PACKAGES="luci-app-sqm kmod-sched-cake kmod-sched-core kmod-ipt-conntrack-extra luci-app-adguardhome opennds"
+          export PACKAGES="kmod-sched-cake"
           ${IMAGEBUILDER_SH} ${RELEASES_BRANCH}
           echo "build_tag=OpenWrt_imagebuilder_${RELEASES_BRANCH/:/_}_$(date +"%Y.%m")" >> ${GITHUB_ENV}
           # Create symbolic link for packaging
@@ -421,9 +421,9 @@ jobs:
           gh_token: ${{ secrets.GITHUB_TOKEN }}
           body: |
             ### OpenWrt Image Information
-            - Default IP: `192.168.10.101`
+            - Default IP: `192.168.1.1`
             - Default username: `root`
-            - Default password: `Anutong0327!`
+            - Default password: `password`
             - Default WIFI name: `OpenWrt`
             - Default WIFI password: `none`
             ### Install to EMMC
