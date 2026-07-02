@@ -405,6 +405,7 @@ jobs:
           kernel_repo: ${{ inputs.kernel_repo }}
           kernel_usage: ${{ inputs.kernel_usage }}
           builder_name: ${{ inputs.builder_name }}
+          openwrt_packages: luci-app-sqm luci-app-adguardhome opennds
 
       - name: Upload packaged OpenWrt to Release
         uses: ophub/upload-to-releases@main
@@ -419,9 +420,9 @@ jobs:
           gh_token: ${{ secrets.GITHUB_TOKEN }}
           body: |
             ### OpenWrt Image Information
-            - Default IP: `192.168.1.1`
+            - Default IP: `192.168.10.101`
             - Default username: `root`
-            - Default password: `password`
+            - Default password: `Anutong0327!`
             - Default WIFI name: `OpenWrt`
             - Default WIFI password: `none`
             ### Install to EMMC
