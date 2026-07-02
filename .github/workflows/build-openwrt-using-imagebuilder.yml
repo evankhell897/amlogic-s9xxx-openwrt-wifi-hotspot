@@ -373,6 +373,8 @@ jobs:
         run: |
           RELEASES_BRANCH="${{ inputs.releases_branch }}"
           chmod +x ${IMAGEBUILDER_SH}
+          # Injecting packages here via the PACKAGES variable
+          export PACKAGES="luci-app-sqm kmod-sched-cake kmod-sched-core kmod-ipt-conntrack-extra luci-app-adguardhome opennds"
           ${IMAGEBUILDER_SH} ${RELEASES_BRANCH}
           echo "build_tag=OpenWrt_imagebuilder_${RELEASES_BRANCH/:/_}_$(date +"%Y.%m")" >> ${GITHUB_ENV}
           # Create symbolic link for packaging
@@ -405,7 +407,6 @@ jobs:
           kernel_repo: ${{ inputs.kernel_repo }}
           kernel_usage: ${{ inputs.kernel_usage }}
           builder_name: ${{ inputs.builder_name }}
-          openwrt_packages: luci-app-sqm luci-app-adguardhome opennds
 
       - name: Upload packaged OpenWrt to Release
         uses: ophub/upload-to-releases@main
