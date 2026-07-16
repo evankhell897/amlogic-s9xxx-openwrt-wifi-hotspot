@@ -141,11 +141,7 @@ jobs:
           # Injecting packages here via the PACKAGES variable
           # - kmod-sched-cake, sqm-scripts, luci-app-sqm  -> SQM/CAKE QoS
           # - opennds, luci-app-opennds                   -> captive portal for voucher auth
-          # - adguardhome                                 -> DNS filtering daemon
-          #   NOTE: luci-app-adguardhome is NOT in the official OpenWrt feed, so it can't
-          #   be pulled in here. Configure AdGuard Home via SSH + its own web UI on :3000,
-          #   or add a custom feed to imagebuilder.sh if you want the LuCI page too.
-          export PACKAGES="kmod-sched-cake sqm-scripts luci-app-sqm opennds luci-app-opennds adguardhome"
+          export PACKAGES="kmod-sched-cake sqm-scripts luci-app-sqm opennds luci-app-opennds"
           ${IMAGEBUILDER_SH} ${RELEASES_BRANCH}
           echo "build_tag=OpenWrt_imagebuilder_${RELEASES_BRANCH/:/_}_$(date +"%Y.%m")" >> ${GITHUB_ENV}
           # Create symbolic link for packaging
@@ -200,7 +196,6 @@ jobs:
             ### Included packages
             - OpenNDS (captive portal / voucher auth)
             - SQM-scripts + CAKE (bandwidth shaping)
-            - AdGuard Home (DNS filtering, configure via :3000)
             ### Install to EMMC
             - Login to OpenWrt → `System` → `Amlogic Service` → `Install OpenWrt`
             ### Applicable Platform
