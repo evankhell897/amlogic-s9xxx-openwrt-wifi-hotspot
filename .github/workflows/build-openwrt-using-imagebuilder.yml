@@ -4,6 +4,9 @@
 # Instructions:  https://openwrt.org/docs/guide-user/additional-software/imagebuilder
 # Download from: https://downloads.openwrt.org/releases
 #                https://downloads.immortalwrt.org/releases
+#
+# Custom build for ZTE B860H (Amlogic S905X) — Piso WiFi voucher hotspot
+# Stack: OpenNDS (captive portal) + SQM/CAKE (QoS) + AdGuard Home (DNS filtering)
 #=====================================================================================
 
 name: Build OpenWrt using ImageBuilder
@@ -19,15 +22,15 @@ on:
         type: choice
         options:
           - openwrt:25.12.4
-          
+
       openwrt_board:
         description: "Select device board"
         required: false
-        default: "all"
+        default: "s905x-b860h"
         type: choice
         options:
           - s905x-b860h
-          
+
       openwrt_kernel:
         description: "Select kernel version"
         required: false
@@ -36,7 +39,7 @@ on:
         options:
           - 6.12.y
           - 6.12.y_6.18.y
-          
+
       auto_kernel:
         description: "Auto use the latest kernel"
         required: false
@@ -56,7 +59,7 @@ on:
         type: choice
         options:
           - stable
-          
+
       openwrt_ip:
         description: "Set OpenWrt default IP address."
         required: false
@@ -136,7 +139,13 @@ jobs:
           RELEASES_BRANCH="${{ inputs.releases_branch }}"
           chmod +x ${IMAGEBUILDER_SH}
           # Injecting packages here via the PACKAGES variable
-          export PACKAGES="kmod-sched-cake"
+          # - kmod-sched-cake, sqm-scripts, luci-app-sqm  -> SQM/CAKE QoS
+          # - opennds, luci-app-opennds                   -> captive portal for voucher auth
+          # - adguardhome                                 -> DNS filtering daemon
+          #   NOTE: luci-app-adguardhome is NOT in the official OpenWrt feed, so it can't
+          #   be pulled in here. Configure AdGuard Home via SSH + its own web UI on :3000,
+          #   or add a custom feed to imagebuilder.sh if you want the LuCI page too.
+          export PACKAGES="kmod-sched-cake sqm-scripts luci-app-sqm opennds luci-app-opennds adguardhome"
           ${IMAGEBUILDER_SH} ${RELEASES_BRANCH}
           echo "build_tag=OpenWrt_imagebuilder_${RELEASES_BRANCH/:/_}_$(date +"%Y.%m")" >> ${GITHUB_ENV}
           # Create symbolic link for packaging
@@ -186,8 +195,12 @@ jobs:
             - Default IP: `10.0.0.1`
             - Default username: `root`
             - Default password: `password`
-            - Default WIFI name: `OpenWrt`
+            - Default WIFI name: `OpenWRT`
             - Default WIFI password: `none`
+            ### Included packages
+            - OpenNDS (captive portal / voucher auth)
+            - SQM-scripts + CAKE (bandwidth shaping)
+            - AdGuard Home (DNS filtering, configure via :3000)
             ### Install to EMMC
             - Login to OpenWrt → `System` → `Amlogic Service` → `Install OpenWrt`
             ### Applicable Platform
